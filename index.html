@@ -32,19 +32,6 @@
 <body>
     <canvas id="neural-canvas"></canvas>
     
-    <!-- Loading Screen -->
-    <div class="loader" id="loader">
-        <div class="loader-content">
-            <div class="loader-logo">
-                <span class="loader-bracket">{</span>
-                <span class="loader-text">SRB</span>
-                <span class="loader-bracket">}</span>
-            </div>
-            <div class="loader-bar">
-                <div class="loader-progress"></div>
-            </div>
-        </div>
-    </div>
     
     <nav class="nav">
         <div class="nav-logo">
@@ -57,6 +44,7 @@
             <a href="#experience" class="nav-link">Experience</a>
             <a href="#projects" class="nav-link">Projects</a>
             <a href="#skills" class="nav-link">Skills</a>
+            <a href="#jd-matcher" class="nav-link">JD Matcher</a>
             <a href="#contact" class="nav-link">Contact</a>
         </div>
         <a href="Sadashiv_Raj_Bharadwaj_Resume.pdf" class="nav-resume-btn" download>
@@ -568,10 +556,93 @@
             </div>
         </section>
 
+        <section class="jd-matcher" id="jd-matcher">
+            <div class="section-header">
+                <span class="section-number">06</span>
+                <h2 class="section-title">Am I a Good Fit?</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="matcher-container">
+                <div class="matcher-intro">
+                    <div class="matcher-icon">🎯</div>
+                    <h3>AI-Powered JD Match Analyzer</h3>
+                    <p>Paste a job description below and let AI analyze how well I match your requirements.</p>
+                </div>
+                
+                <div class="matcher-input-section">
+                    <textarea 
+                        id="jd-input" 
+                        class="jd-textarea" 
+                        placeholder="Paste the job description here...
+
+Example:
+We're looking for a Senior Data Engineer with experience in Python, Spark, and building data pipelines at scale. Experience with LLMs and cloud platforms (AWS/GCP) is a plus..."
+                        rows="8"
+                    ></textarea>
+                    <button id="analyze-btn" class="btn btn-primary btn-analyze">
+                        <span class="btn-text">Analyze Match</span>
+                        <span class="btn-loading">
+                            <svg class="spinner" viewBox="0 0 24 24" width="20" height="20">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="32" stroke-linecap="round"/>
+                            </svg>
+                            Analyzing...
+                        </span>
+                        <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="matcher-results" class="matcher-results hidden">
+                    <div class="result-score-section">
+                        <div class="score-circle">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="score-bg" cx="50" cy="50" r="45"/>
+                                <circle class="score-progress" cx="50" cy="50" r="45" id="score-circle"/>
+                            </svg>
+                            <div class="score-value">
+                                <span id="score-number">0</span>
+                                <span class="score-percent">%</span>
+                            </div>
+                        </div>
+                        <div class="score-label">Match Score</div>
+                    </div>
+
+                    <div class="result-details">
+                        <div class="result-card result-matches">
+                            <h4><span class="result-icon">✅</span> Strong Matches</h4>
+                            <ul id="strong-matches"></ul>
+                        </div>
+
+                        <div class="result-card result-experience">
+                            <h4><span class="result-icon">📊</span> Relevant Experience</h4>
+                            <ul id="relevant-experience"></ul>
+                        </div>
+
+                        <div class="result-card result-gaps">
+                            <h4><span class="result-icon">⚠️</span> Areas to Discuss</h4>
+                            <ul id="potential-gaps"></ul>
+                        </div>
+
+                        <div class="result-card result-pitch">
+                            <h4><span class="result-icon">💡</span> Why Sadashiv?</h4>
+                            <p id="why-sadashiv"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="matcher-error" class="matcher-error hidden">
+                    <span class="error-icon">⚠️</span>
+                    <span id="error-message"></span>
+                </div>
+            </div>
+        </section>
+
         <section class="contact" id="contact">
             <div class="contact-wrapper">
                 <div class="section-header">
-                    <span class="section-number">06</span>
+                    <span class="section-number">07</span>
                     <h2 class="section-title">Let's Connect</h2>
                     <div class="section-line"></div>
                 </div>

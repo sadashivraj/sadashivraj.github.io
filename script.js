@@ -1,11 +1,6 @@
-// ===== LOADER =====
+// ===== START ANIMATIONS ON LOAD =====
 window.addEventListener('load', () => {
-    const loader = document.getElementById('loader');
-    setTimeout(() => {
-        loader.classList.add('hidden');
-        // Start animations after loader
-        startHeroAnimations();
-    }, 1800);
+    startHeroAnimations();
 });
 
 // ===== TYPING ANIMATION =====
@@ -478,6 +473,172 @@ document.addEventListener('keydown', (e) => {
     } else {
         konamiIndex = 0;
     }
+});
+
+// ===== JD MATCHER =====
+const JD_MATCHER_API = 'https://green-scene-bf17.kunalb1995.workers.dev/';
+
+class JDMatcher {
+    constructor() {
+        this.analyzeBtn = document.getElementById('analyze-btn');
+        this.jdInput = document.getElementById('jd-input');
+        this.resultsSection = document.getElementById('matcher-results');
+        this.errorSection = document.getElementById('matcher-error');
+        this.errorMessage = document.getElementById('error-message');
+        
+        if (this.analyzeBtn) {
+            this.analyzeBtn.addEventListener('click', () => this.analyze());
+        }
+        
+        // Add SVG gradient for score circle
+        this.addScoreGradient();
+    }
+    
+    addScoreGradient() {
+        const svg = document.querySelector('.score-circle svg');
+        if (svg) {
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            defs.innerHTML = `
+                <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#f59e0b"/>
+                    <stop offset="100%" style="stop-color:#14b8a6"/>
+                </linearGradient>
+            `;
+            svg.insertBefore(defs, svg.firstChild);
+        }
+    }
+    
+    async analyze() {
+        const jobDescription = this.jdInput.value.trim();
+        
+        if (jobDescription.length < 50) {
+            this.showError('Please enter a job description (at least 50 characters)');
+            return;
+        }
+        
+        // Show loading state
+        this.analyzeBtn.classList.add('loading');
+        this.analyzeBtn.disabled = true;
+        this.hideError();
+        this.resultsSection.classList.add('hidden');
+        
+        try {
+            const response = await fetch(JD_MATCHER_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ jobDescription })
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to analyze');
+            }
+            
+            this.displayResults(data);
+        } catch (error) {
+            this.showError(error.message || 'Something went wrong. Please try again.');
+        } finally {
+            this.analyzeBtn.classList.remove('loading');
+            this.analyzeBtn.disabled = false;
+        }
+    }
+    
+    displayResults(data) {
+        // Show results section
+        this.resultsSection.classList.remove('hidden');
+        
+        // Animate score
+        const scoreNumber = document.getElementById('score-number');
+        const scoreCircle = document.getElementById('score-circle');
+        const targetScore = data.matchScore || 0;
+        
+        // Animate number
+        this.animateNumber(scoreNumber, 0, targetScore, 1500);
+        
+        // Animate circle (circumference = 2 * PI * 45 ≈ 283)
+        const circumference = 283;
+        const offset = circumference - (circumference * targetScore / 100);
+        setTimeout(() => {
+            scoreCircle.style.strokeDashoffset = offset;
+        }, 100);
+        
+        // Populate strong matches
+        const matchesList = document.getElementById('strong-matches');
+        matchesList.innerHTML = '';
+        (data.strongMatches || []).forEach(match => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${match.skill}:</strong> ${match.evidence}`;
+            matchesList.appendChild(li);
+        });
+        
+        // Populate relevant experience
+        const expList = document.getElementById('relevant-experience');
+        expList.innerHTML = '';
+        (data.relevantExperience || []).forEach(exp => {
+            const li = document.createElement('li');
+            li.textContent = exp;
+            expList.appendChild(li);
+        });
+        
+        // Populate potential gaps
+        const gapsList = document.getElementById('potential-gaps');
+        gapsList.innerHTML = '';
+        const gaps = data.potentialGaps || [];
+        if (gaps.length === 0) {
+            const li = document.createElement('li');
+            li.textContent = 'No significant gaps identified!';
+            gapsList.appendChild(li);
+        } else {
+            gaps.forEach(gap => {
+                const li = document.createElement('li');
+                li.textContent = gap;
+                gapsList.appendChild(li);
+            });
+        }
+        
+        // Populate why sadashiv
+        const whySection = document.getElementById('why-sadashiv');
+        whySection.textContent = data.whySadashiv || '';
+        
+        // Scroll to results
+        this.resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    animateNumber(element, start, end, duration) {
+        const startTime = performance.now();
+        
+        const update = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 4);
+            const current = Math.floor(start + (end - start) * easeOut);
+            
+            element.textContent = current;
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            } else {
+                element.textContent = end;
+            }
+        };
+        
+        requestAnimationFrame(update);
+    }
+    
+    showError(message) {
+        this.errorMessage.textContent = message;
+        this.errorSection.classList.remove('hidden');
+    }
+    
+    hideError() {
+        this.errorSection.classList.add('hidden');
+    }
+}
+
+// Initialize JD Matcher
+document.addEventListener('DOMContentLoaded', () => {
+    new JDMatcher();
 });
 
 console.log('%c👋 Hey there, curious developer!', 'font-size: 20px; font-weight: bold; color: #f59e0b;');

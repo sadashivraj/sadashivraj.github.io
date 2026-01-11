@@ -57,66 +57,6 @@ body {
     position: relative;
 }
 
-/* ===== LOADER ===== */
-.loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg-deep);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.loader.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.loader-content {
-    text-align: center;
-}
-
-.loader-logo {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 3rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
-    animation: pulse 1.5s ease-in-out infinite;
-}
-
-.loader-bracket {
-    color: var(--accent-primary);
-}
-
-.loader-text {
-    color: var(--text-primary);
-}
-
-.loader-bar {
-    width: 200px;
-    height: 3px;
-    background: var(--bg-elevated);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.loader-progress {
-    width: 0;
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-    animation: loading 1.5s ease-out forwards;
-}
-
-@keyframes loading {
-    0% { width: 0; }
-    100% { width: 100%; }
-}
-
 /* ===== CANVAS BACKGROUND ===== */
 #neural-canvas {
     position: fixed;
@@ -1025,6 +965,279 @@ section {
 .education-date {
     font-size: 0.85rem;
     color: var(--text-muted);
+}
+
+/* ===== JD MATCHER SECTION ===== */
+.jd-matcher {
+    padding-bottom: 4rem;
+}
+
+.matcher-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.matcher-intro {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.matcher-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.matcher-intro h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.matcher-intro p {
+    color: var(--text-secondary);
+}
+
+.matcher-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.jd-textarea {
+    width: 100%;
+    padding: 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 180px;
+    transition: border-color var(--transition-medium);
+}
+
+.jd-textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.jd-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.btn-analyze {
+    align-self: flex-end;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+}
+
+.btn-analyze .btn-loading {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-analyze.loading .btn-text,
+.btn-analyze.loading .btn-icon {
+    display: none;
+}
+
+.btn-analyze.loading .btn-loading {
+    display: flex;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Results Section */
+.matcher-results {
+    margin-top: 2.5rem;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.matcher-results.hidden {
+    display: none;
+}
+
+.result-score-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.score-circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.score-circle svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.score-bg {
+    fill: none;
+    stroke: var(--bg-elevated);
+    stroke-width: 8;
+}
+
+.score-progress {
+    fill: none;
+    stroke: url(#score-gradient);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 1.5s ease-out;
+}
+
+.score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: baseline;
+}
+
+#score-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+
+.score-percent {
+    font-size: 1.25rem;
+    color: var(--accent-primary);
+}
+
+.score-label {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.result-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+}
+
+.result-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.result-card h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.result-icon {
+    font-size: 1.1rem;
+}
+
+.result-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.result-card li {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.5;
+}
+
+.result-card li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent-primary);
+}
+
+.result-matches {
+    border-left: 3px solid #22c55e;
+}
+
+.result-experience {
+    border-left: 3px solid var(--accent-secondary);
+}
+
+.result-gaps {
+    border-left: 3px solid #f59e0b;
+}
+
+.result-pitch {
+    grid-column: 1 / -1;
+    border-left: 3px solid var(--accent-tertiary);
+}
+
+.result-pitch p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.7;
+    font-style: italic;
+}
+
+/* Error State */
+.matcher-error {
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ef4444;
+}
+
+.matcher-error.hidden {
+    display: none;
+}
+
+.error-icon {
+    font-size: 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .result-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-pitch {
+        grid-column: 1;
+    }
+    
+    .btn-analyze {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* ===== CONTACT SECTION ===== */
