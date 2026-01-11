@@ -1,3 +1,117 @@
+// ===== LOADER =====
+window.addEventListener('load', () => {
+    const loader = document.getElementById('loader');
+    setTimeout(() => {
+        loader.classList.add('hidden');
+        // Start animations after loader
+        startHeroAnimations();
+    }, 1800);
+});
+
+// ===== TYPING ANIMATION =====
+class TypingAnimation {
+    constructor(element, words, options = {}) {
+        this.element = element;
+        this.words = words;
+        this.typeSpeed = options.typeSpeed || 80;
+        this.deleteSpeed = options.deleteSpeed || 50;
+        this.pauseTime = options.pauseTime || 2000;
+        this.wordIndex = 0;
+        this.charIndex = 0;
+        this.isDeleting = false;
+        this.start();
+    }
+
+    start() {
+        this.type();
+    }
+
+    type() {
+        const currentWord = this.words[this.wordIndex];
+        
+        if (this.isDeleting) {
+            this.element.textContent = currentWord.substring(0, this.charIndex - 1);
+            this.charIndex--;
+        } else {
+            this.element.textContent = currentWord.substring(0, this.charIndex + 1);
+            this.charIndex++;
+        }
+
+        let delay = this.isDeleting ? this.deleteSpeed : this.typeSpeed;
+
+        if (!this.isDeleting && this.charIndex === currentWord.length) {
+            delay = this.pauseTime;
+            this.isDeleting = true;
+        } else if (this.isDeleting && this.charIndex === 0) {
+            this.isDeleting = false;
+            this.wordIndex = (this.wordIndex + 1) % this.words.length;
+            delay = 500;
+        }
+
+        setTimeout(() => this.type(), delay);
+    }
+}
+
+// ===== COUNTER ANIMATION =====
+function animateCounters() {
+    const stats = document.querySelectorAll('.stat');
+    
+    stats.forEach(stat => {
+        const valueElement = stat.querySelector('.stat-value');
+        const targetValue = parseInt(stat.dataset.value);
+        const duration = 2000;
+        const startTime = performance.now();
+        
+        function updateCounter(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function for smooth animation
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const currentValue = Math.floor(easeOutQuart * targetValue);
+            
+            // Format large numbers
+            if (targetValue >= 1000) {
+                valueElement.textContent = (currentValue / 1000).toFixed(currentValue >= 10000 ? 0 : 1) + 'K';
+            } else {
+                valueElement.textContent = currentValue;
+            }
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                // Final value
+                if (targetValue >= 1000) {
+                    valueElement.textContent = (targetValue / 1000).toFixed(targetValue >= 10000 ? 0 : 1) + 'K';
+                } else {
+                    valueElement.textContent = targetValue;
+                }
+            }
+        }
+        
+        requestAnimationFrame(updateCounter);
+    });
+}
+
+// ===== START HERO ANIMATIONS =====
+function startHeroAnimations() {
+    // Start typing animation
+    const typingElement = document.getElementById('typing-text');
+    if (typingElement) {
+        new TypingAnimation(typingElement, [
+            'AI Systems at Scale',
+            'Enterprise Data Pipelines',
+            'Agentic AI Platforms',
+            'LLM & RAG Architectures',
+            'High-Throughput Systems',
+            'ML Infrastructure'
+        ]);
+    }
+    
+    // Start counter animation after a delay
+    setTimeout(animateCounters, 500);
+}
+
 // ===== NEURAL NETWORK CANVAS ANIMATION =====
 class NeuralCanvas {
     constructor() {
@@ -216,41 +330,12 @@ document.querySelectorAll('.skill-category').forEach((category, index) => {
     animateOnScroll.observe(category);
 });
 
-// ===== TYPING EFFECT FOR CODE BLOCK =====
-class TypeWriter {
-    constructor(element, speed = 30) {
-        this.element = element;
-        this.speed = speed;
-        this.originalHTML = element.innerHTML;
-        this.element.innerHTML = '';
-        this.type();
-    }
-    
-    type() {
-        let charIndex = 0;
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = this.originalHTML;
-        const text = tempDiv.innerHTML;
-        
-        const typeChar = () => {
-            if (charIndex < text.length) {
-                // Handle HTML tags - add them all at once
-                if (text[charIndex] === '<') {
-                    const closeIndex = text.indexOf('>', charIndex);
-                    this.element.innerHTML += text.substring(charIndex, closeIndex + 1);
-                    charIndex = closeIndex + 1;
-                } else {
-                    this.element.innerHTML += text[charIndex];
-                    charIndex++;
-                }
-                setTimeout(typeChar, this.speed);
-            }
-        };
-        
-        // Start typing after a delay
-        setTimeout(typeChar, 1000);
-    }
-}
+// Observe timeline items with stagger
+document.querySelectorAll('.timeline-item').forEach((item, index) => {
+    item.style.transitionDelay = `${index * 0.15}s`;
+    item.classList.add('scroll-animate');
+    animateOnScroll.observe(item);
+});
 
 // ===== NAV BACKGROUND ON SCROLL =====
 const nav = document.querySelector('.nav');
@@ -276,12 +361,37 @@ window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
     const rate = scrolled * 0.3;
     
-    if (heroContent) {
+    if (heroContent && scrolled < window.innerHeight) {
         heroContent.style.transform = `translateY(${rate}px)`;
+        heroContent.style.opacity = 1 - (scrolled / window.innerHeight);
     }
-    if (heroVisual) {
+    if (heroVisual && scrolled < window.innerHeight) {
         heroVisual.style.transform = `translateY(${rate * 0.5}px)`;
+        heroVisual.style.opacity = 1 - (scrolled / window.innerHeight);
     }
+});
+
+// ===== ACTIVE NAV LINK HIGHLIGHTING =====
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+    let current = '';
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= sectionTop - 200) {
+            current = section.getAttribute('id');
+        }
+    });
+    
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+        }
+    });
 });
 
 // ===== INITIALIZE =====
@@ -301,6 +411,14 @@ document.addEventListener('DOMContentLoaded', () => {
         .scroll-animate.animate-in {
             opacity: 1;
             transform: translateY(0);
+        }
+        
+        .nav-link.active {
+            color: var(--accent-primary);
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
         }
     `;
     document.head.appendChild(style);
@@ -365,4 +483,3 @@ document.addEventListener('keydown', (e) => {
 console.log('%c👋 Hey there, curious developer!', 'font-size: 20px; font-weight: bold; color: #f59e0b;');
 console.log('%cBuilt with passion by Sadashiv Raj Bharadwaj', 'font-size: 14px; color: #14b8a6;');
 console.log('%cTry the Konami code for a surprise 🎮', 'font-size: 12px; color: #9ca3af;');
-
