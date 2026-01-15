@@ -644,3 +644,80 @@ document.addEventListener('DOMContentLoaded', () => {
 console.log('%c👋 Hey there, curious developer!', 'font-size: 20px; font-weight: bold; color: #f59e0b;');
 console.log('%cBuilt with passion by Sadashiv Raj Bharadwaj', 'font-size: 14px; color: #14b8a6;');
 console.log('%cTry the Konami code for a surprise 🎮', 'font-size: 12px; color: #9ca3af;');
+
+// ===== PROJECT MODAL =====
+class ProjectModal {
+    constructor() {
+        this.modal = document.getElementById('project-modal');
+        this.modalContent = this.modal?.querySelector('.modal-content');
+        this.closeBtn = this.modal?.querySelector('.modal-close');
+        this.viewDetailsBtns = document.querySelectorAll('.btn-view-details');
+        this.projectSections = document.querySelectorAll('.modal-project');
+        
+        if (this.modal) {
+            this.init();
+        }
+    }
+    
+    init() {
+        // Open modal on button click
+        this.viewDetailsBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const projectId = btn.dataset.project;
+                this.openModal(projectId);
+            });
+        });
+        
+        // Close modal on close button click
+        this.closeBtn?.addEventListener('click', () => this.closeModal());
+        
+        // Close modal on overlay click
+        this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) {
+                this.closeModal();
+            }
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+                this.closeModal();
+            }
+        });
+    }
+    
+    openModal(projectId) {
+        // Hide all project sections
+        this.projectSections.forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Show the selected project
+        const targetProject = document.querySelector(`.modal-project[data-project="${projectId}"]`);
+        if (targetProject) {
+            targetProject.classList.add('active');
+        }
+        
+        // Show modal
+        this.modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Reset scroll position
+        this.modalContent.scrollTop = 0;
+    }
+    
+    closeModal() {
+        this.modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Initialize Project Modal
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        new ProjectModal();
+    });
+} else {
+    new ProjectModal();
+}
