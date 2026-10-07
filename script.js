@@ -59,7 +59,9 @@ function animateCounters() {
         
         function updateCounter(currentTime) {
             const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
+            // Clamp both ends: a negative elapsed (clock skew, restored tab) would
+            // otherwise drive the easing below zero and render a negative number.
+            const progress = Math.min(Math.max(elapsed / duration, 0), 1);
             
             // Easing function for smooth animation
             const easeOutQuart = 1 - Math.pow(1 - progress, 4);
@@ -94,12 +96,12 @@ function startHeroAnimations() {
     const typingElement = document.getElementById('typing-text');
     if (typingElement) {
         new TypingAnimation(typingElement, [
-            'AI Systems at Scale',
-            'Enterprise Data Pipelines',
-            'Agentic AI Platforms',
-            'LLM & RAG Architectures',
-            'High-Throughput Systems',
-            'ML Infrastructure'
+            'Agent Platforms in Production',
+            'Agentic Runtimes',
+            'LLM Infrastructure',
+            'Ambient AI Assistants',
+            'Evaluation & Observability',
+            'Enterprise Data Pipelines'
         ]);
     }
     
@@ -610,7 +612,9 @@ class JDMatcher {
         
         const update = (currentTime) => {
             const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
+            // Clamp both ends: a negative elapsed (clock skew, restored tab) would
+            // otherwise drive the easing below zero and render a negative number.
+            const progress = Math.min(Math.max(elapsed / duration, 0), 1);
             const easeOut = 1 - Math.pow(1 - progress, 4);
             const current = Math.floor(start + (end - start) * easeOut);
             
