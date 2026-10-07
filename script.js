@@ -569,8 +569,13 @@ class JDMatcher {
         const matchesList = document.getElementById('strong-matches');
         matchesList.innerHTML = '';
         (data.strongMatches || []).forEach(match => {
+            // Built as nodes rather than an HTML string: the analyzer response is
+            // model-generated from a user-supplied job description, so treating it
+            // as markup would let a crafted JD inject script via the model output.
             const li = document.createElement('li');
-            li.innerHTML = `<strong>${match.skill}:</strong> ${match.evidence}`;
+            const label = document.createElement('strong');
+            label.textContent = `${match.skill ?? ''}:`;
+            li.append(label, ' ', match.evidence ?? '');
             matchesList.appendChild(li);
         });
         
